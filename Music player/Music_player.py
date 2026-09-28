@@ -1,6 +1,6 @@
 """
 Project name: Music player
-Version: 2.1.0  (Fixed auto play bug)
+Version: 2.1.1  (Fixed auto play bug)
 Author: Tbm Tahmid
 Date: 11/3/2026
 """
@@ -12,7 +12,7 @@ import threading
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 
-# Dynamic user command receive korar jonno global variables
+# global variables
 current_command = None
 
 def get_input():
@@ -24,7 +24,7 @@ def get_input():
 def play_music(folder, playlist):
     global current_command
     
-    # Input handler thread shuru
+    # Input handler thread start
     input_thread = threading.Thread(target=get_input, daemon=True)
     if not input_thread.is_alive():
         input_thread.start()
@@ -68,7 +68,7 @@ def play_music(folder, playlist):
                 else:
                     print("Invalid command. Use [P]ause, [R]esume, [S]top, or [N]ext.")
             
-            time.sleep(0.2)  # CPU usage komanor jonno
+            time.sleep(0.2)  #For reducing CPU usage
         
         if stopped:
             break
@@ -79,9 +79,8 @@ def main():
     except pygame.error as e:
         print("Audio initialization failed:", e)
         return
-    
-    # Windows path escape problem erate forward slash (/) use kora hoyeche
-    folder = "C:/Users/Tur/Music"
+    
+    folder = "folder" #Provide your music folder address here
 
     if not os.path.isdir(folder):
         print(f'Folder "{folder}" not found.')
@@ -109,7 +108,7 @@ def main():
         choice_input = input("\nEnter your choice: ").strip().upper()
     
         if choice_input == 'Q':
-            print("Bye!")
+            print("Bye! Have a nice day!!")
             break
         elif choice_input == 'P':
             play_music(folder, mp3_files)
