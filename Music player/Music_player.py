@@ -48,7 +48,7 @@ def play_music(folder, playlist):
         while pygame.mixer.music.get_busy():
             if current_command:
                 cmd = current_command
-                current_command = None  # Process korar por reset
+                current_command = None  # Reset after process.
 
                 if cmd == 'P':
                     pygame.mixer.music.pause()
