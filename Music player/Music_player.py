@@ -1,16 +1,34 @@
 """
 Project name: Music player
-Version: 2.0.0
-Author: Tbm Tahmid (base taken from Bro Code. This is an edited version)
+Version: 2.1.0  (Fixed auto play bug)
+Author: Tbm Tahmid
 Date: 11/3/2026
 """
 
 import os
 import random
+import time
+import threading
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 
+# Dynamic user command receive korar jonno global variables
+current_command = None
+
+def get_input():
+    global current_command
+    while True:
+        cmd = input("> ").strip().upper()
+        current_command = cmd
+
 def play_music(folder, playlist):
+    global current_command
+    
+    # Input handler thread shuru
+    input_thread = threading.Thread(target=get_input, daemon=True)
+    if not input_thread.is_alive():
+        input_thread.start()
+
     for song in playlist:
         file_path = os.path.join(folder, song)
 
@@ -25,26 +43,32 @@ def play_music(folder, playlist):
         print("Commands: [P]ause, [R]esume, [S]top, [N]ext")
 
         stopped = False
-        while pygame.mixer.music.get_busy() or pygame.mixer.music.get_pos() != -1:
-            command = input("> ").upper()
+        current_command = None  # Previous command reset
 
-            if command == 'P':
-                pygame.mixer.music.pause()
-                print("Music paused.")
-            elif command == 'R':
-                pygame.mixer.music.unpause()
-                print("Music resumed.")
-            elif command == 'S':
-                pygame.mixer.music.stop()
-                print("Music stopped.")
-                stopped = True
-                break
-            elif command == 'N':
-                pygame.mixer.music.stop()
-                print("Skipping to next song...")
-                break
-            else:
-                print("Invalid command. Use [P]ause, [R]esume, [S]top, or [N]ext.")
+        while pygame.mixer.music.get_busy():
+            if current_command:
+                cmd = current_command
+                current_command = None  # Process korar por reset
+
+                if cmd == 'P':
+                    pygame.mixer.music.pause()
+                    print("Music paused.")
+                elif cmd == 'R':
+                    pygame.mixer.music.unpause()
+                    print("Music resumed.")
+                elif cmd == 'S':
+                    pygame.mixer.music.stop()
+                    print("Music stopped.")
+                    stopped = True
+                    break
+                elif cmd == 'N':
+                    pygame.mixer.music.stop()
+                    print("Skipping to next song...")
+                    break
+                else:
+                    print("Invalid command. Use [P]ause, [R]esume, [S]top, or [N]ext.")
+            
+            time.sleep(0.2)  # CPU usage komanor jonno
         
         if stopped:
             break
@@ -56,7 +80,8 @@ def main():
         print("Audio initialization failed:", e)
         return
     
-    folder = "folder"  #Give your Music folde address here
+    # Windows path escape problem erate forward slash (/) use kora hoyeche
+    folder = "C:/Users/Tur/Music"
 
     if not os.path.isdir(folder):
         print(f'Folder "{folder}" not found.')
