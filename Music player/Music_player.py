@@ -127,7 +127,7 @@ def main():
         print("Audio initialization failed:", e)
         return
     
-    folder = "C:/Users/Tur/Music"
+    folder = "Music" #Give your music folder location here
 
     if not os.path.isdir(folder):
         print(f'Folder "{folder}" not found. Creating folder...')
